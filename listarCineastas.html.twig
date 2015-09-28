@@ -1,0 +1,66 @@
+{% extends 'edcBundle::viewEDC.html.twig' %}
+
+{% block body %}
+    {{ parent() }}
+    <h1>Listado de cineastas con Paginación</h1>
+     {% for flashMessage in app.session.flashbag.get('mensaje') %}
+        <span class="alert-success">
+            {{ flashMessage }}
+            <hr />
+        </span>
+    {% endfor %}
+    <hr />
+    <table class="table table-bordered">
+        <tbody>
+             <th>Nombre</th>
+        </tbody>
+        {% for dato in datos %}
+	        <tr>
+	            <td>{{dato.nombre}}</td>
+	            <td>
+	  				<a href="{{ path('editCineasta', {'id':dato.id}) }}" title="Editar">Editar</a>
+	                -
+	                <a onclick="return eliminarCineasta({{ dato.id }},'{{ dato.nombre }}');" href="{{ path('delCineasta', {'id':dato.id}) }}" title="Eliminar">Eliminar</a>
+	            </td>
+	        </tr>
+        {% endfor %}
+        
+        {# PAGINACION #}
+        <tr>
+            <td colspan="3" style="text-align: right;"> 
+            	<ul class="pagination">
+                	{% for i in 1.. totalPaginas %}
+                    	{% if loop.first %}
+                            <li {% if page == 1%} class="disabled" {% endif %}>
+                              <a href="{{path('listarCineastas')}}?page={{page-1}}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                              </a>
+                            </li>
+                        {%endif%}
+                        
+                        <li {% if page == loop.index %}  class="active" {% endif %}>
+                            <a href="{{path('listarCineastas')}}?page={{loop.index}}">{{loop.index}}</a>
+                        </li>
+                        
+                        {%if loop.last %}                                                   
+                            <li {% if page == totalPaginas%} class="disabled" {% endif %}>
+                              <a href="{{path('listarCineastas')}}?page={{page+1}}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                              </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                 </ul>
+            </td>
+        </tr>
+     </table>
+    
+    <script>
+	function eliminarCineasta(idCineasta, nombre) {
+		if (confirm("¿Estás seguro de querer eliminar el cineasta "+nombre+"?"))
+			return true;
+		else
+			return false;
+	}
+	</script>
+ {% endblock %}
